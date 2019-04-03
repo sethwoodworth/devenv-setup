@@ -63,6 +63,16 @@ packer: /usr/bin/packer  ## Install packer via apt
 	sudo apt install packer
 
 
+kitty: $(HOME)/.local/kitty.app/bin/kitty $(HOME)/.local/bin/kitty
+$(HOME)/.local/kitty.app/bin/kitty:
+	bin/kitty-installer
+$(HOME)/.local/bin/kitty:
+	ln -s $(HOME)/.local/kitty.app/bin/kitty $(HOME)/.local/bin/kitty
+
+
+dasht: $(HOME)/.local/share/dasht
+$(HOME)/.local/share/dasht:
+	git clone git@github.com:sunaku/dasht.git $(HOME)/.local/share/dasht
 
 .DEFAULT_GOAL := help
 help:
