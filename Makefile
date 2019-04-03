@@ -1,22 +1,26 @@
 # TODO: pipsi and favored pipsi packages
 # TODO: required apt packages
-XDG_DATA_HOME=~/.local/share
-XDG_CONFIG_DIR=~/.config
+XDG_DATA_HOME=$(HOME)/.local/share
+XDG_CONFIG_DIR=$(HOME)/.config
+LOCAL_BIN=$(HOME)/.local/bin
+
+ZSHRCD=$(XDG_CONFIG_DIR)/zsh/zshrc.d
 
 PYENV_ROOT=$(XDG_DATA_HOME)/pyenv
 
 CODE_DIR=$(HOME)/code
 
-PYTHON_VERSION=3.7.2
-TERRAFORM_VERSION=0.11.13
+PYTHON_VERSION ?= 3.7.2
+TERRAFORM_VERSION = 0.11.13
 
-install-pyenv: $(PYENV_ROOT)  ## Install pyenv to XDG_DATA_HOME
+pyenv: $(PYENV_ROOT)  ## Install pyenv to XDG_DATA_HOME
 $(PYENV_ROOT):
 	PYENV_ROOT=$(PYENV_ROOT) bin/pyenv-installer
 
 install-python: $(PYENV_ROOT)/versions/$(PYTHON_VERSION)  ## Install python3
 $(PYENV_ROOT)/versions/$(PYTHON_VERSION):
 	PYENV_ROOT=$(PYENV_ROOT) pyenv install $(PYTHON_VERSION)
+	PYENV_ROOT=$(PYENV_ROOT) pyenv global $(PYTHON_VERSION)
 
 .PHONY: neovim-deps
 neovim-deps:
@@ -62,6 +66,24 @@ packer: /usr/bin/packer  ## Install packer via apt
 /usr/bin/packer:
 	sudo apt install packer
 
+zsh-autosuggestions: $(XDG_DATA_HOME)/zsh-autosuggestions
+$(XDG_DATA_HOME)/zsh-autosuggestions:
+	git clone https://github.com/zsh-users/zsh-autosuggestions $(XDG_DATA_HOME)/zsh-autosuggestions
+	echo 'source $(XDG_DATA_HOME)/zsh-autosuggestions/zsh-autosuggestions.zsh' > $(ZSHRCD)/zsh-autosuggestions.zsh
+
+fzf: $(XDG_DATA_HOME)/fzf  ## Install fzf with keybindings and autocomplete
+$(XDG_DATA_HOME)/fzf:
+	git clone --depth 1 https://github.com/junegunn/fzf.git $(XDG_DATA_HOME)/fzf
+	$(XDG_DATA_HOME)/fzf/install --bin
+	ln -s $(XDG_DATA_HOME)/fzf/bin/fzf $(LOCAL_BIN)/fzf
+	ln -s $(XDG_DATA_HOME)/fzf/shell/key-bindings.zsh $(ZSHRCD)/fzf-key-bindings.zsh
+	ln -s $(XDG_DATA_HOME)/fzf/shell/completion.zsh $(ZSHRCD)/fzf-completion.zsh
+
+scm_breeze: $(XDG_DATA_HOME)/scm_breeze
+$(XDG_DATA_HOME)/scm_breeze:
+	git clone --depth=1 git://github.com/scmbreeze/scm_breeze.git $(XDG_DATA_HOME)/scm_breeze
+	cp ./patches/scm_breeze.sh $(XDG_DATA_HOME)/scm_breeze/scm_breeze.sh
+	echo 'source "/home/${USER}/.local/share/scm_breeze/scm_breeze.sh"' > $(ZSHRCD)/scm_breeze.zsh
 
 
 .DEFAULT_GOAL := help
