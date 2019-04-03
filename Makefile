@@ -79,7 +79,7 @@ $(XDG_DATA_HOME)/fzf:
 	ln -s $(XDG_DATA_HOME)/fzf/shell/key-bindings.zsh $(ZSHRCD)/fzf-key-bindings.zsh
 	ln -s $(XDG_DATA_HOME)/fzf/shell/completion.zsh $(ZSHRCD)/fzf-completion.zsh
 
-scm_breeze: $(XDG_DATA_HOME)/scm_breeze
+scm_breeze: $(XDG_DATA_HOME)/scm_breeze  ## Install and customized scm_breeze
 $(XDG_DATA_HOME)/scm_breeze:
 	git clone --depth=1 git://github.com/scmbreeze/scm_breeze.git $(XDG_DATA_HOME)/scm_breeze
 	cp ./patches/scm_breeze.sh $(XDG_DATA_HOME)/scm_breeze/scm_breeze.sh
@@ -92,7 +92,7 @@ $(HOME)/.local/bin/kitty:
 	ln -s $(HOME)/.local/kitty.app/bin/kitty $(HOME)/.local/bin/kitty
 
 
-dasht: $(HOME)/.local/share/dasht
+dasht: $(HOME)/.local/share/dasht  ## WIP Install dasht cli doc browser
 $(HOME)/.local/share/dasht:
 	git clone git@github.com:sunaku/dasht.git $(HOME)/.local/share/dasht
 
