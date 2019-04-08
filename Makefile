@@ -19,6 +19,9 @@ $(PYENV_ROOT):
 
 install-python: $(PYENV_ROOT)/versions/$(PYTHON_VERSION)  ## Install python3
 $(PYENV_ROOT)/versions/$(PYTHON_VERSION):
+	sudo apt install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
+libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
+xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
 	PYENV_ROOT=$(PYENV_ROOT) pyenv install $(PYTHON_VERSION)
 	PYENV_ROOT=$(PYENV_ROOT) pyenv global $(PYTHON_VERSION)
 
@@ -38,7 +41,7 @@ neovim-deps:
 
 clone-neovim: $(CODE_DIR)/neovim
 $(CODE_DIR)/neovim:
-	git clone git@github.com:neovim/neovim.git $(CODE_DIR)/neovim
+	git clone https://github.com/neovim/neovim.git $(CODE_DIR)/neovim
 	cd $(CODE_DIR)/neovim
 
 build-neovim: $(CODE_DIR)/neovim /usr/local/bin/nvim
