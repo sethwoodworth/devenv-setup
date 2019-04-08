@@ -94,6 +94,11 @@ $(HOME)/.local/kitty.app/bin/kitty:
 $(HOME)/.local/bin/kitty:
 	ln -s $(HOME)/.local/kitty.app/bin/kitty $(HOME)/.local/bin/kitty
 
+tldr: $(HOME)/.local/bin/tldr
+$(HOME)/.local/bin/tldr:
+	curl -o ~/.local/bin/tldr https://raw.githubusercontent.com/raylee/tldr/master/tldr
+	chmod +x $(HOME)/.local/bin/tldr
+	echo 'autoload bashcompinit\nbashcompinit\ncomplete -W "$$(tldr 2>/dev/null --list)" tldr' > $(ZSHRCD)/tldr-completion.zsh
 
 dasht: $(HOME)/.local/share/dasht  ## WIP Install dasht cli doc browser
 $(HOME)/.local/share/dasht:
