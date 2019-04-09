@@ -10,7 +10,7 @@ PYENV_ROOT=$(XDG_DATA_HOME)/pyenv
 
 CODE_DIR=$(HOME)/code
 
-PYTHON_VERSION ?= 3.7.2
+PYTHON_VERSION ?= 3.7.3
 TERRAFORM_VERSION = 0.11.13
 
 pyenv: $(PYENV_ROOT)  ## Install pyenv to XDG_DATA_HOME
@@ -55,6 +55,14 @@ set-nvim-as-vim:
 	sudo update-alternatives --install /usr/bin/vi vi /usr/local/bin/nvim 60
 	sudo update-alternatives --install /usr/bin/vim vim /usr/local/bin/nvim 60
 	sudo update-alternatives --install /usr/bin/editor editor /usr/local/bin/nvim 60
+
+nvim-venv: $(HOME)/.local/venvs/nvim/bin/python3 install-python
+$(HOME)/.local/venvs/nvim/bin/python3:
+	mkdir -p $(HOME)/.local/venvs/
+	python3 -m venv $(HOME)/.local/venvs/nvim
+	$(HOME)/.local/venvs/nvim/bin/pip install pynvim
+	$(HOME)/.local/venvs/nvim/bin/pip install black
+	vim +UpdateRemotePlugins
 
 neovim: neovim-deps clone-neovim build-neovim set-nvim-as-vim   ## Clone, build, install, and set update-alternatives for neovim
 
@@ -103,6 +111,12 @@ $(HOME)/.local/bin/tldr:
 dasht: $(HOME)/.local/share/dasht  ## WIP Install dasht cli doc browser
 $(HOME)/.local/share/dasht:
 	git clone git@github.com:sunaku/dasht.git $(HOME)/.local/share/dasht
+
+pipsi: $(HOME)/.local/bin/pipsi
+$(HOME)/.local/bin/pipsi:
+	python bin/get-pipsi.py
+
+
 
 .DEFAULT_GOAL := help
 help:
