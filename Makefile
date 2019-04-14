@@ -12,6 +12,7 @@ CODE_DIR=$(HOME)/code
 
 PYTHON_VERSION ?= 3.7.3
 TERRAFORM_VERSION = 0.11.13
+NODEJS_VERSION ?= 10.15.3
 
 pyenv: $(PYENV_ROOT)  ## Install pyenv to XDG_DATA_HOME
 $(PYENV_ROOT):
@@ -116,6 +117,17 @@ pipsi: $(HOME)/.local/bin/pipsi
 $(HOME)/.local/bin/pipsi:
 	python bin/get-pipsi.py
 
+nodejs: $(LOCAL_BIN)/node
+$(LOCAL_BIN)/node:
+	mkdir -p $(HOME)/.local/share/nodejs
+	curl https://nodejs.org/dist/v$(NODEJS_VERSION)/node-v$(NODEJS_VERSION)-linux-x64.tar.xz | tar Jxvf - -C $(HOME)/.local/share/nodejs/
+	ln -s $(HOME)/.local/share/nodejs/node-v$(NODEJS_VERSION)-linux-x64/bin/node $(LOCAL_BIN)/node
+	ln -s $(HOME)/.local/share/nodejs/node-v$(NODEJS_VERSION)-linux-x64/bin/npm $(LOCAL_BIN)/npm
+
+gatsby: $(LOCAL_BIN)/gatsby nodejs
+$(LOCAL_BIN)/gatsby:
+	npm install -g gatsby
+	ln -s $(HOME)/.local/share/nodejs/node-v$(NODEJS_VERSION)-linux-x64/bin/gatsby $(LOCAL_BIN)/gatsby
 
 
 .DEFAULT_GOAL := help
