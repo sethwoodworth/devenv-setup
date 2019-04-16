@@ -129,6 +129,21 @@ $(LOCAL_BIN)/gatsby:
 	npm install -g gatsby
 	ln -s $(HOME)/.local/share/nodejs/node-v$(NODEJS_VERSION)-linux-x64/bin/gatsby $(LOCAL_BIN)/gatsby
 
+micropython: /usr/local/bin/micropython
+/usr/local/bin/micropython:
+	cd $(HOME)/code/ && git clone git@github.com:micropython/micropython.git
+	cd $(HOME)/code/micropython/ports/unix && make
+	cd $(HOME)/code/micropython/ports/unix && sudo make install
+
+esptool: $(LOCAL_BIN)/esptool.py
+$(LOCAL_BIN)/esptool.py:
+	pipsi install esptool
+
+.PHONY: dialout
+dialout:
+	sudo usermod -aG dialout $(USER)
+
+embedded: micropython esptool dialout  ## Install embedded chip dev toolchain w/ micropython & esptool
 
 .DEFAULT_GOAL := help
 help:
