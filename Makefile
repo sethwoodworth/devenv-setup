@@ -97,7 +97,11 @@ $(XDG_DATA_HOME)/scm_breeze:
 	cp ./patches/scm_breeze.sh $(XDG_DATA_HOME)/scm_breeze/scm_breeze.sh
 	echo 'source "/home/${USER}/.local/share/scm_breeze/scm_breeze.sh"' > $(ZSHRCD)/scm_breeze.zsh
 
-kitty: $(HOME)/.local/kitty.app/bin/kitty $(HOME)/.local/bin/kitty
+kitty-completion: $(ZSHRCD)/kitty-completion.zsh
+$(ZSHRCD)/kitty-completion.zsh:
+	echo "kitty + complete setup zsh | source /dev/stdin" > $(ZSHRCD)/kitty-completion.zsh
+
+kitty: $(HOME)/.local/kitty.app/bin/kitty $(HOME)/.local/bin/kitty kitty-completion
 $(HOME)/.local/kitty.app/bin/kitty:
 	bin/kitty-installer
 $(HOME)/.local/bin/kitty:
