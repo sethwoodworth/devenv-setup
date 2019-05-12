@@ -78,7 +78,7 @@ packer: /usr/bin/packer  ## Install packer via apt
 /usr/bin/packer:
 	sudo apt install packer
 
-zsh-autosuggestions: $(XDG_DATA_HOME)/zsh-autosuggestions
+zsh-autosuggestions: $(XDG_DATA_HOME)/zsh-autosuggestions  ## Install zsh-autosuggestions
 $(XDG_DATA_HOME)/zsh-autosuggestions:
 	git clone https://github.com/zsh-users/zsh-autosuggestions $(XDG_DATA_HOME)/zsh-autosuggestions
 	echo 'source $(XDG_DATA_HOME)/zsh-autosuggestions/zsh-autosuggestions.zsh' > $(ZSHRCD)/zsh-autosuggestions.zsh
@@ -91,7 +91,7 @@ $(XDG_DATA_HOME)/fzf:
 	ln -s $(XDG_DATA_HOME)/fzf/shell/key-bindings.zsh $(ZSHRCD)/fzf-key-bindings.zsh
 	ln -s $(XDG_DATA_HOME)/fzf/shell/completion.zsh $(ZSHRCD)/fzf-completion.zsh
 
-scm_breeze: $(XDG_DATA_HOME)/scm_breeze  ## Install and customized scm_breeze
+scm_breeze: $(XDG_DATA_HOME)/scm_breeze ./patches/scm_breeze.sh  ## Install and customized scm_breeze
 $(XDG_DATA_HOME)/scm_breeze:
 	git clone --depth=1 git://github.com/scmbreeze/scm_breeze.git $(XDG_DATA_HOME)/scm_breeze
 	cp ./patches/scm_breeze.sh $(XDG_DATA_HOME)/scm_breeze/scm_breeze.sh

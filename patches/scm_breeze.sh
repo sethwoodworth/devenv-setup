@@ -14,12 +14,8 @@ if [[ -s "$XDG_CONFIG_HOME/scm_breeze/git.scmbrc" ]]; then
   source "$XDG_CONFIG_HOME/scm_breeze/git.scmbrc"
   source "$scmbDir/lib/git/helpers.sh"
   source "$scmbDir/lib/git/aliases.sh"
-  source "$scmbDir/lib/git/keybindings.sh"
   source "$scmbDir/lib/git/status_shortcuts.sh"
   source "$scmbDir/lib/git/branch_shortcuts.sh"
-  source "$scmbDir/lib/git/grep_shortcuts.sh"
-  source "$scmbDir/lib/git/shell_shortcuts.sh"
-  source "$scmbDir/lib/git/repo_index.sh"
   source "$scmbDir/lib/git/tools.sh"
 
   if ! type ruby > /dev/null 2>&1; then
