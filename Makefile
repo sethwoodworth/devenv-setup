@@ -78,6 +78,12 @@ packer: /usr/bin/packer  ## Install packer via apt
 /usr/bin/packer:
 	sudo apt install packer
 
+zsh-syntax-highlighting: $(ZSHRCD)/zsh-syntax-highlighting
+$(ZSHRCD)/zsh-syntax-highlighting:
+	sudo apt install zsh-syntax-highlighting
+	echo 'source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' > $(ZSHRCD)/zsh-syntax-highlighing.zsh
+
+
 zsh-autosuggestions: $(XDG_DATA_HOME)/zsh-autosuggestions  ## Install zsh-autosuggestions
 $(XDG_DATA_HOME)/zsh-autosuggestions:
 	git clone https://github.com/zsh-users/zsh-autosuggestions $(XDG_DATA_HOME)/zsh-autosuggestions
