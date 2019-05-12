@@ -128,9 +128,10 @@ $(HOME)/.local/bin/tldr:
 	chmod +x $(HOME)/.local/bin/tldr
 	echo 'autoload bashcompinit\nbashcompinit\ncomplete -W "$$(tldr 2>/dev/null --list)" tldr' > $(ZSHRCD)/tldr-completion.zsh
 
-dasht: $(HOME)/.local/share/dasht  ## WIP Install dasht cli doc browser
-$(HOME)/.local/share/dasht:
-	git clone git@github.com:sunaku/dasht.git $(HOME)/.local/share/dasht
+dasht: $(HOME)/.local/share/dasht $(XDG_DATA_HOME)/dasht ## Install dasht cli doc browser
+$(XDG_DATA_HOME)/dasht:
+	git clone git@github.com:sunaku/dasht.git $(XDG_DATA_HOME)/dasht
+	ln -s $(XDG_DATA_HOME)/dasht/bin/* $(LOCAL_BIN)/
 
 pipsi: $(HOME)/.local/bin/pipsi
 $(HOME)/.local/bin/pipsi:
