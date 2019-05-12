@@ -97,7 +97,11 @@ $(XDG_DATA_HOME)/scm_breeze:
 	cp ./patches/scm_breeze.sh $(XDG_DATA_HOME)/scm_breeze/scm_breeze.sh
 	echo 'source "/home/${USER}/.local/share/scm_breeze/scm_breeze.sh"' > $(ZSHRCD)/scm_breeze.zsh
 
-kitty: $(HOME)/.local/kitty.app/bin/kitty $(HOME)/.local/bin/kitty
+kitty-completion: $(ZSHRCD)/kitty-completion.zsh
+$(ZSHRCD)/kitty-completion.zsh:
+	echo "kitty + complete setup zsh | source /dev/stdin" > $(ZSHRCD)/kitty-completion.zsh
+
+kitty: $(HOME)/.local/kitty.app/bin/kitty $(HOME)/.local/bin/kitty kitty-completion
 $(HOME)/.local/kitty.app/bin/kitty:
 	bin/kitty-installer
 $(HOME)/.local/bin/kitty:
@@ -117,14 +121,19 @@ pipsi: $(HOME)/.local/bin/pipsi
 $(HOME)/.local/bin/pipsi:
 	python bin/get-pipsi.py
 
-nodejs: $(LOCAL_BIN)/node
+nodejs: $(LOCAL_BIN)/node ## Install nodejs stable to .local/share
 $(LOCAL_BIN)/node:
 	mkdir -p $(HOME)/.local/share/nodejs
 	curl https://nodejs.org/dist/v$(NODEJS_VERSION)/node-v$(NODEJS_VERSION)-linux-x64.tar.xz | tar Jxvf - -C $(HOME)/.local/share/nodejs/
 	ln -s $(HOME)/.local/share/nodejs/node-v$(NODEJS_VERSION)-linux-x64/bin/node $(LOCAL_BIN)/node
 	ln -s $(HOME)/.local/share/nodejs/node-v$(NODEJS_VERSION)-linux-x64/bin/npm $(LOCAL_BIN)/npm
 
-gatsby: $(LOCAL_BIN)/gatsby nodejs
+yarn: $(LOCAL_BIN)/yarn
+$(LOCAL_BIN)/yarn:
+	npm install -g yarn
+	ln -s $(HOME)/.local/share/nodejs/node-v$(NODEJS_VERSION)-linux-x64/bin/yarn $(LOCAL_BIN)/yarn
+
+gatsby: nodejs $(LOCAL_BIN)/gatsby ## npm install gatsby global
 $(LOCAL_BIN)/gatsby:
 	npm install -g gatsby
 	ln -s $(HOME)/.local/share/nodejs/node-v$(NODEJS_VERSION)-linux-x64/bin/gatsby $(LOCAL_BIN)/gatsby
