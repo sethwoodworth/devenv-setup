@@ -14,9 +14,12 @@ PYTHON_VERSION ?= 3.7.3
 TERRAFORM_VERSION = 0.11.13
 NODEJS_VERSION ?= 10.15.3
 
-pyenv: $(PYENV_ROOT)  ## Install pyenv to XDG_DATA_HOME
-$(PYENV_ROOT):
+pyenv: $(ZSHRCD)/pyenv.zsh  ## Install pyenv to XDG_DATA_HOME
+$(ZSHRCD)/pyenv.zsh:
 	PYENV_ROOT=$(PYENV_ROOT) bin/pyenv-installer
+	ln -s $(PYENV_ROOT)/libexec/pyenv $(LOCAL_BIN)/pyenv
+	echo 'eval "$$(pyenv init -)"' > $(ZSHRCD)/pyenv.zsh
+	echo 'eval "$$(pyenv virtualenv-init -)"' >> $(ZSHRCD)/pyenv.zsh
 
 install-python: $(PYENV_ROOT)/versions/$(PYTHON_VERSION)  ## Install python3
 $(PYENV_ROOT)/versions/$(PYTHON_VERSION):
@@ -78,11 +81,17 @@ packer: /usr/bin/packer  ## Install packer via apt
 /usr/bin/packer:
 	sudo apt install packer
 
-zsh-syntax-highlighting: $(ZSHRCD)/zsh-syntax-highlighting
+zsh: zsh-command-not-found zsh-syntax-highlighting zsh-autosuggestions  ## Install all zsh plugins
+
+zsh-command-not-found: $(ZSHRCD)/zsh-command-not-found  ## Install zsh-command-not-found
+$(ZSHRCD)/zsh-command-not-found:
+	sudo apt install command-not-found
+	echo 'source /etc/zsh_command_not_found' > $(ZSHRCD)/zsh-command-not-found
+
+zsh-syntax-highlighting: $(ZSHRCD)/zsh-syntax-highlighting  ## Install zsh-syntax-highlighting
 $(ZSHRCD)/zsh-syntax-highlighting:
 	sudo apt install zsh-syntax-highlighting
 	echo 'source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' > $(ZSHRCD)/zsh-syntax-highlighing.zsh
-
 
 zsh-autosuggestions: $(XDG_DATA_HOME)/zsh-autosuggestions  ## Install zsh-autosuggestions
 $(XDG_DATA_HOME)/zsh-autosuggestions:
