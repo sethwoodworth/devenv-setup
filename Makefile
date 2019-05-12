@@ -143,7 +143,11 @@ $(LOCAL_BIN)/esptool.py:
 dialout:
 	sudo usermod -aG dialout $(USER)
 
-embedded: micropython esptool dialout  ## Install embedded chip dev toolchain w/ micropython & esptool
+/usr/bin/picocom:
+	sudo apt install picocom
+
+
+embedded: micropython esptool dialout /usr/bin/picocom  ## Install embedded chip dev toolchain w/ micropython & esptool
 
 .DEFAULT_GOAL := help
 help:
