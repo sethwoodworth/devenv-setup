@@ -30,14 +30,6 @@ xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
 	PYENV_ROOT=$(PYENV_ROOT) pyenv install $(PYTHON_VERSION)
 	PYENV_ROOT=$(PYENV_ROOT) pyenv global $(PYTHON_VERSION)
 
-pipsi: /usr/bin/pipsi
-/usr/bin/pipsi:
-	sudo apt install pipsi
-
-powerline: $(PIPSI_VENVS)/powerline-status
-$(PIPSI_VENVS)/powerline-status:
-	pipsi install powerline-status
-
 .PHONY: neovim-deps
 neovim-deps:
 	sudo apt install \
@@ -142,9 +134,13 @@ $(XDG_DATA_HOME)/dasht:
 	git clone git@github.com:sunaku/dasht.git $(XDG_DATA_HOME)/dasht
 	ln -s $(XDG_DATA_HOME)/dasht/bin/* $(LOCAL_BIN)/
 
-pipsi: $(HOME)/.local/bin/pipsi
+pipsi: $(HOME)/.local/bin/pipsi  ## Install pipsi
 $(HOME)/.local/bin/pipsi:
 	python bin/get-pipsi.py
+
+powerline: pipsi $(PIPSI_VENVS)/powerline-status  # Install powerline
+$(PIPSI_VENVS)/powerline-status:
+	pipsi install powerline-status
 
 nodejs: $(LOCAL_BIN)/node ## Install nodejs stable to .local/share
 $(LOCAL_BIN)/node:
