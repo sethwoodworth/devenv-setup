@@ -7,6 +7,7 @@ LOCAL_BIN=$(HOME)/.local/bin
 ZSHRCD=$(XDG_CONFIG_DIR)/zsh/zshrc.d
 
 PYENV_ROOT=$(XDG_DATA_HOME)/pyenv
+PIPSI_VENVS=$(HOME)/.local/venvs
 
 CODE_DIR=$(HOME)/code
 
@@ -21,6 +22,14 @@ install-python: $(PYENV_ROOT)/versions/$(PYTHON_VERSION)  ## Install python3
 $(PYENV_ROOT)/versions/$(PYTHON_VERSION):
 	PYENV_ROOT=$(PYENV_ROOT) pyenv install $(PYTHON_VERSION)
 	PYENV_ROOT=$(PYENV_ROOT) pyenv global $(PYTHON_VERSION)
+
+pipsi: /usr/bin/pipsi
+/usr/bin/pipsi:
+	sudo apt install pipsi
+
+powerline: $(PIPSI_VENVS)/powerline-status
+$(PIPSI_VENVS)/powerline-status:
+	pipsi install powerline-status
 
 .PHONY: neovim-deps
 neovim-deps:
