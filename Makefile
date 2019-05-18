@@ -21,13 +21,16 @@ $(ZSHRCD)/pyenv.zsh:
 	echo 'eval "$$(pyenv init -)"' > $(ZSHRCD)/pyenv.zsh
 	echo 'eval "$$(pyenv virtualenv-init -)"' >> $(ZSHRCD)/pyenv.zsh
 
-install-python: $(PYENV_ROOT)/versions/$(PYTHON_VERSION)  ## Install python3
+install-python: $(PYENV_ROOT)/versions/$(PYTHON_VERSION) $(ZSHRC)/pip-completion.zsh ## Install python3
 $(PYENV_ROOT)/versions/$(PYTHON_VERSION):
 	sudo apt install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
 libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
 xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
 	PYENV_ROOT=$(PYENV_ROOT) pyenv install $(PYTHON_VERSION)
 	PYENV_ROOT=$(PYENV_ROOT) pyenv global $(PYTHON_VERSION)
+
+$(ZSHRC)/pip-completion.zsh:
+	cp ./completion/pip-completion.zsh $(ZSHRCD)/pip-completion.zsh
 
 .PHONY: neovim-deps
 neovim-deps:
@@ -133,10 +136,6 @@ $(XDG_DATA_HOME)/dasht:
 	git clone git@github.com:sunaku/dasht.git $(XDG_DATA_HOME)/dasht
 	ln -s $(XDG_DATA_HOME)/dasht/bin/* $(LOCAL_BIN)/
 
-pipsi: $(HOME)/.local/bin/pipsi
-$(HOME)/.local/bin/pipsi:
-	python bin/get-pipsi.py
-
 nodejs: $(LOCAL_BIN)/node ## Install nodejs stable to .local/share
 $(LOCAL_BIN)/node:
 	mkdir -p $(HOME)/.local/share/nodejs
@@ -160,9 +159,21 @@ micropython: /usr/local/bin/micropython
 	cd $(HOME)/code/micropython/ports/unix && make
 	cd $(HOME)/code/micropython/ports/unix && sudo make install
 
+pipsi: $(HOME)/.local/bin/pipsi
+$(HOME)/.local/bin/pipsi:
+	python bin/get-pipsi.py
+
 esptool: $(LOCAL_BIN)/esptool.py
 $(LOCAL_BIN)/esptool.py:
 	pipsi install esptool
+
+awscli: pipsi $(LOCAL_BIN)/aws $(ZSHRCD)/awscli-completion.zsh
+$(LOCAL_BIN)/aws:
+	pipsi install awscli
+
+$(ZSHRCD)/awscli-completion.zsh:
+	echo 'source ${HOME}/.local/bin/aws_zsh_completer.sh' > $(ZSHRCD)/awscli-completion.zsh
+
 
 .PHONY: dialout
 dialout:
@@ -170,7 +181,6 @@ dialout:
 
 /usr/bin/picocom:
 	sudo apt install picocom
-
 
 embedded: micropython esptool dialout /usr/bin/picocom  ## Install embedded chip dev toolchain w/ micropython & esptool
 
