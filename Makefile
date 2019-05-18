@@ -1,4 +1,3 @@
-# TODO: pipsi and favored pipsi packages
 # TODO: required apt packages
 XDG_DATA_HOME=$(HOME)/.local/share
 XDG_CONFIG_DIR=$(HOME)/.config
@@ -7,6 +6,7 @@ LOCAL_BIN=$(HOME)/.local/bin
 ZSHRCD=$(XDG_CONFIG_DIR)/zsh/zshrc.d
 
 PYENV_ROOT=$(XDG_DATA_HOME)/pyenv
+PIPSI_VENVS=$(HOME)/.local/venvs
 
 CODE_DIR=$(HOME)/code
 
@@ -135,6 +135,14 @@ dasht: $(HOME)/.local/share/dasht $(XDG_DATA_HOME)/dasht ## Install dasht cli do
 $(XDG_DATA_HOME)/dasht:
 	git clone git@github.com:sunaku/dasht.git $(XDG_DATA_HOME)/dasht
 	ln -s $(XDG_DATA_HOME)/dasht/bin/* $(LOCAL_BIN)/
+
+pipsi: $(HOME)/.local/bin/pipsi  ## Install pipsi
+$(HOME)/.local/bin/pipsi:
+	python bin/get-pipsi.py
+
+powerline: pipsi $(PIPSI_VENVS)/powerline-status  # Install powerline
+$(PIPSI_VENVS)/powerline-status:
+	pipsi install powerline-status
 
 nodejs: $(LOCAL_BIN)/node ## Install nodejs stable to .local/share
 $(LOCAL_BIN)/node:
