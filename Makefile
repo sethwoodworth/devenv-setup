@@ -144,6 +144,17 @@ powerline: pipsi $(PIPSI_VENVS)/powerline-status  # Install powerline
 $(PIPSI_VENVS)/powerline-status:
 	pipsi install powerline-status
 
+esptool: $(LOCAL_BIN)/esptool.py
+$(LOCAL_BIN)/esptool.py:
+	pipsi install esptool
+
+awscli: pipsi $(LOCAL_BIN)/aws $(ZSHRCD)/awscli-completion.zsh
+$(LOCAL_BIN)/aws:
+	pipsi install awscli
+
+$(ZSHRCD)/awscli-completion.zsh:
+	echo 'source ${HOME}/.local/bin/aws_zsh_completer.sh' > $(ZSHRCD)/awscli-completion.zsh
+
 nodejs: $(LOCAL_BIN)/node ## Install nodejs stable to .local/share
 $(LOCAL_BIN)/node:
 	mkdir -p $(HOME)/.local/share/nodejs
@@ -166,21 +177,6 @@ micropython: /usr/local/bin/micropython
 	cd $(HOME)/code/ && git clone git@github.com:micropython/micropython.git
 	cd $(HOME)/code/micropython/ports/unix && make
 	cd $(HOME)/code/micropython/ports/unix && sudo make install
-
-pipsi: $(HOME)/.local/bin/pipsi
-$(HOME)/.local/bin/pipsi:
-	python bin/get-pipsi.py
-
-esptool: $(LOCAL_BIN)/esptool.py
-$(LOCAL_BIN)/esptool.py:
-	pipsi install esptool
-
-awscli: pipsi $(LOCAL_BIN)/aws $(ZSHRCD)/awscli-completion.zsh
-$(LOCAL_BIN)/aws:
-	pipsi install awscli
-
-$(ZSHRCD)/awscli-completion.zsh:
-	echo 'source ${HOME}/.local/bin/aws_zsh_completer.sh' > $(ZSHRCD)/awscli-completion.zsh
 
 
 .PHONY: dialout
