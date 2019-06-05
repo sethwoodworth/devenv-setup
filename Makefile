@@ -125,6 +125,10 @@ $(HOME)/.local/kitty.app/bin/kitty:
 $(HOME)/.local/bin/kitty:
 	ln -s $(HOME)/.local/kitty.app/bin/kitty $(HOME)/.local/bin/kitty
 
+kitty-papercolor:
+	mkdir -p $(HOME)/.local/share/kitty/
+	git clone https://github.com/craffate/papercolor-kitty.git  $(HOME)/.local/share/kitty/papercolor-kitty
+
 tldr: $(HOME)/.local/bin/tldr
 $(HOME)/.local/bin/tldr:
 	curl -o ~/.local/bin/tldr https://raw.githubusercontent.com/raylee/tldr/master/tldr
