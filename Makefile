@@ -69,6 +69,7 @@ $(HOME)/.local/venvs/nvim/bin/python3:
 	python3 -m venv $(HOME)/.local/venvs/nvim
 	$(HOME)/.local/venvs/nvim/bin/pip install pynvim
 	$(HOME)/.local/venvs/nvim/bin/pip install black
+	$(HOME)/.local/venvs/nvim/bin/pip install jedi
 	vim +UpdateRemotePlugins
 
 neovim: neovim-deps clone-neovim build-neovim set-nvim-as-vim   ## Clone, build, install, and set update-alternatives for neovim
