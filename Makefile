@@ -102,6 +102,12 @@ $(XDG_DATA_HOME)/zsh-autosuggestions:
 	git clone https://github.com/zsh-users/zsh-autosuggestions $(XDG_DATA_HOME)/zsh-autosuggestions
 	echo 'source $(XDG_DATA_HOME)/zsh-autosuggestions/zsh-autosuggestions.zsh' > $(ZSHRCD)/zsh-autosuggestions.zsh
 
+powerline10k: $(XDG_DATA_HOME)/powerline10k
+$(XDG_DATA_HOME)/powerline10k:
+	git clone https://github.com/romkatv/powerlevel10k.git $(XDG_DATA_HOME)/powerline10k
+	echo 'source $(XDG_DATA_HOME)/powerline10k/powerlevel10k.zsh-theme' > $(ZSHRCD)/powerlevel10k-source.zsh
+	echo 'source $(XDG_CONFIG_DIR)/zsh/p10k.zsh' > $(ZSHRCD)/powerlevel-theme.zsh
+
 fzf: $(XDG_DATA_HOME)/fzf  ## Install fzf with keybindings and autocomplete
 $(XDG_DATA_HOME)/fzf:
 	git clone --depth 1 https://github.com/junegunn/fzf.git $(XDG_DATA_HOME)/fzf
@@ -176,6 +182,17 @@ gatsby: nodejs $(LOCAL_BIN)/gatsby ## npm install gatsby global
 $(LOCAL_BIN)/gatsby:
 	npm install -g gatsby
 	ln -s $(HOME)/.local/share/nodejs/node-v$(NODEJS_VERSION)-linux-x64/bin/gatsby $(LOCAL_BIN)/gatsby
+
+serverless: nodejs  $(LOCAL_BIN)/serverless ## npm install serverless global
+$(LOCAL_BIN)/serverless:
+	npm install -g serverless
+	ln -s $(HOME)/.local/share/nodejs/node-v$(NODEJS_VERSION)-linux-x64/bin/serverless $(LOCAL_BIN)/serverless
+
+foundation-cli: nodejs $(LOCAL_BIN)/foundation
+$(LOCAL_BIN)/foundation:
+	npm install --global foundation-cli
+	ln -s $(HOME)/.local/share/nodejs/node-v$(NODEJS_VERSION)-linux-x64/bin/foundation $(LOCAL_BIN)/foundation
+
 
 micropython: /usr/local/bin/micropython
 /usr/local/bin/micropython:
