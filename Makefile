@@ -13,6 +13,9 @@ CODE_DIR=$(HOME)/code
 PYTHON_VERSION ?= 3.7.3
 TERRAFORM_VERSION = 0.11.13
 NODEJS_VERSION ?= 10.15.3
+# Rust
+CARGO_HOME=$(XDG_DATA_HOME)/cargo
+RUSTUP_HOME=$(XDG_DATA_HOME)/rustup
 
 pyenv: $(ZSHRCD)/pyenv.zsh  ## Install pyenv to XDG_DATA_HOME
 $(ZSHRCD)/pyenv.zsh:
@@ -209,6 +212,19 @@ dialout:
 	sudo apt install picocom
 
 embedded: micropython esptool dialout /usr/bin/picocom  ## Install embedded chip dev toolchain w/ micropython & esptool
+
+cargo:
+	echo 'export CARGO_HOME=$(CARGO_HOME)' > $(ZSHRCD)/rust-cargo.zsh
+	echo 'export RUSTUP_HOME=$(RUSTUP_HOME)' >> $(ZSHRCD)/rust-cargo.zsh
+	echo 'source $(XDG_DATA_HOME)/cargo/env' >> $(ZSHRCD)/rust-cargo.zsh
+
+rust: $(XDG_DATA_HOME)/cargo/env
+$(XDG_DATA_HOME)/cargo/env:
+	wget https://sh.rustup.rs -O /tmp/rust-installer
+	chmod +x /tmp/rust_installer
+	# V likely wont work as it's an interactive cmd
+	CARGO_HOME=$(CARGO_HOME) RUSTUP_HOME=$(RUSTUP_HOME) ./install-rust.sh
+	echo 'source "$$(XDG_DATA_HOME)/cargo/env)"' > $(ZSHRCD)/rust-cargo.zsh
 
 .DEFAULT_GOAL := help
 help:
