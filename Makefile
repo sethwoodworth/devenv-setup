@@ -1,22 +1,33 @@
+# An opinionated make file for installing tools for my development enviroment
+# URL: https://github.com/sethwoodworth/devenv-setup
+# AUTHOR: Seth Wolfwood <seth@sethish.com>
+
 # TODO: required apt packages
+SHELL := bash
+.SHELLFLAGS := -eu -o pipefail -c
+.ONESHELL: # persistent shells
+.DELETE_ON_ERROR: # delete target on failure, allows for re-run
+MAKEFLAGS += --warn-undefined-variables
+MAKEFLAGS += --no-builtin-rules
+# Directory definition
 XDG_DATA_HOME=$(HOME)/.local/share
-XDG_CONFIG_DIR=$(HOME)/.config
+XDG_CONFIG_HOME=$(HOME)/.config
 LOCAL_BIN=$(HOME)/.local/bin
 
-ZSHRCD=$(XDG_CONFIG_DIR)/zsh/zshrc.d
+ZSHRCD=$(XDG_CONFIG_HOME)/zsh/zshrc.d
 
 PYENV_ROOT=$(XDG_DATA_HOME)/pyenv
-PIPSI_VENVS=$(HOME)/.local/venvs
 
 CODE_DIR=$(HOME)/code
 
-PYTHON_VERSION ?= 3.7.3
+PYTHON_VERSION ?= 3.8.0
 TERRAFORM_VERSION = 0.11.14
 NODEJS_VERSION ?= 10.15.3
-# Rust
 CARGO_HOME=$(XDG_DATA_HOME)/cargo
 RUSTUP_HOME=$(XDG_DATA_HOME)/rustup
 
+## Python and python commands
+python: pyenv install-python
 pyenv: $(ZSHRCD)/pyenv.zsh  ## Install pyenv to XDG_DATA_HOME
 $(ZSHRCD)/pyenv.zsh:
 	PYENV_ROOT=$(PYENV_ROOT) bin/pyenv-installer
@@ -35,6 +46,30 @@ xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
 $(ZSHRC)/pip-completion.zsh:
 	cp ./completion/pip-completion.zsh $(ZSHRCD)/pip-completion.zsh
 
+pipx: $(PYENV_ROOT)/versions/$(PYTHON_VERSION) $(LOCAL_BIN)/pipx  ## Install pipx
+$(LOCAL_BIN)/pipx:
+	python3 -m pip --user install pipx
+
+esptool: $(LOCAL_BIN)/esptool.py
+$(LOCAL_BIN)/esptool.py:
+	pipx install esptool
+
+awscli: pipx $(LOCAL_BIN)/aws $(ZSHRCD)/awscli-completion.zsh
+$(LOCAL_BIN)/aws:
+	pipx install awscli
+
+$(ZSHRCD)/awscli-completion.zsh:
+	echo 'source ${HOME}/.local/bin/aws_zsh_completer.sh' > $(ZSHRCD)/awscli-completion.zsh
+
+ansible: $(LOCAL_BIN)/ansible
+$(LOCAL_BIN)/ansible:
+	pipx install ansible
+
+mycli: $(LOCAL_BIN)/mycli
+$(LOCAL_BIN)/mycli:
+	pipx install mycli
+
+# Neovim: clone, compile, setup
 .PHONY: neovim-deps
 neovim-deps:
 	sudo apt install \
@@ -66,17 +101,18 @@ set-nvim-as-vim:
 	sudo update-alternatives --install /usr/bin/vim vim /usr/local/bin/nvim 60
 	sudo update-alternatives --install /usr/bin/editor editor /usr/local/bin/nvim 60
 
-nvim-venv: $(HOME)/.local/venvs/nvim/bin/python3 install-python
-$(HOME)/.local/venvs/nvim/bin/python3:
-	mkdir -p $(HOME)/.local/venvs/
-	python3 -m venv $(HOME)/.local/venvs/nvim
+nvim-venv: $(HOME)/.local/pipx/nvim/bin/python3 install-python
+$(HOME)/.local/pipx/nvim/bin/python3:
+	python3 -m venv $(HOME)/.local/pipx/nvim
 	$(HOME)/.local/venvs/nvim/bin/pip install pynvim
 	$(HOME)/.local/venvs/nvim/bin/pip install black
 	$(HOME)/.local/venvs/nvim/bin/pip install jedi
+	$(HOME)/.local/venvs/nvim/bin/pip install pylint
 	vim +UpdateRemotePlugins
 
-neovim: neovim-deps clone-neovim build-neovim set-nvim-as-vim   ## Clone, build, install, and set update-alternatives for neovim
+neovim: neovim-deps clone-neovim build-neovim set-nvim-as-vim nvim-venv  ## Clone, build, install, and set update-alternatives for neovim
 
+# Work infra tools
 terraform: ~/.local/bin/terraform  ## Install Terraform to ~/.local/bin
 ~/.local/bin/terraform:
 	wget https://releases.hashicorp.com/terraform/$(TERRAFORM_VERSION)/terraform_$(TERRAFORM_VERSION)_linux_amd64.zip
@@ -109,7 +145,7 @@ powerline10k: $(XDG_DATA_HOME)/powerline10k
 $(XDG_DATA_HOME)/powerline10k:
 	git clone https://github.com/romkatv/powerlevel10k.git $(XDG_DATA_HOME)/powerline10k
 	echo 'source $(XDG_DATA_HOME)/powerline10k/powerlevel10k.zsh-theme' > $(ZSHRCD)/powerlevel10k-source.zsh
-	echo 'source $(XDG_CONFIG_DIR)/zsh/p10k.zsh' > $(ZSHRCD)/powerlevel-theme.zsh
+	echo 'source $(XDG_CONFIG_HOME)/zsh/p10k.zsh' > $(ZSHRCD)/powerlevel-theme.zsh
 
 fzf: $(XDG_DATA_HOME)/fzf  ## Install fzf with keybindings and autocomplete
 $(XDG_DATA_HOME)/fzf:
@@ -149,25 +185,6 @@ dasht: $(HOME)/.local/share/dasht $(XDG_DATA_HOME)/dasht ## Install dasht cli do
 $(XDG_DATA_HOME)/dasht:
 	git clone git@github.com:sunaku/dasht.git $(XDG_DATA_HOME)/dasht
 	ln -s $(XDG_DATA_HOME)/dasht/bin/* $(LOCAL_BIN)/
-
-pipsi: $(HOME)/.local/bin/pipsi  ## Install pipsi
-$(HOME)/.local/bin/pipsi:
-	python bin/get-pipsi.py
-
-powerline: pipsi $(PIPSI_VENVS)/powerline-status  # Install powerline
-$(PIPSI_VENVS)/powerline-status:
-	pipsi install powerline-status
-
-esptool: $(LOCAL_BIN)/esptool.py
-$(LOCAL_BIN)/esptool.py:
-	pipsi install esptool
-
-awscli: pipsi $(LOCAL_BIN)/aws $(ZSHRCD)/awscli-completion.zsh
-$(LOCAL_BIN)/aws:
-	pipsi install awscli
-
-$(ZSHRCD)/awscli-completion.zsh:
-	echo 'source ${HOME}/.local/bin/aws_zsh_completer.sh' > $(ZSHRCD)/awscli-completion.zsh
 
 nodejs: $(LOCAL_BIN)/node ## Install nodejs stable to .local/share
 $(LOCAL_BIN)/node:
