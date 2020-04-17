@@ -58,7 +58,7 @@ awscli: pipx $(LOCAL_BIN)/aws $(ZSHRCD)/awscli-completion.zsh
 $(LOCAL_BIN)/aws:
 	pipx install awscli
 
-$(ZSHRCD)/awscli-completion.zsh:
+$(ZSHRCD)/awscli-completion.zsh:  ## aws_complete
 	echo 'source ${HOME}/.local/bin/aws_zsh_completer.sh' > $(ZSHRCD)/awscli-completion.zsh
 
 ansible: $(LOCAL_BIN)/ansible
@@ -242,6 +242,37 @@ $(XDG_DATA_HOME)/cargo/env:
 	# V likely wont work as it's an interactive cmd
 	CARGO_HOME=$(CARGO_HOME) RUSTUP_HOME=$(RUSTUP_HOME) ./install-rust.sh
 	echo 'source "$$(XDG_DATA_HOME)/cargo/env)"' > $(ZSHRCD)/rust-cargo.zsh
+
+.PHONY: firefox
+firefox: $(XDG_DATA_HOME)/applications/firefox.desktop
+$(XDG_DATA_HOME)/applications/firefox.desktop:
+	wget https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US -O /tmp/firefox.latest.tar.bz2
+	sudo tar xf /tmp/firefox.latest /opt/autofirefox/
+
+cool-retro-term: $(LOCAL_BIN)/cool-retro-term
+$(LOCAL_BIN)/cool-retro-term:
+	wget https://github.com/Swordfish90/cool-retro-term/releases/download/1.1.1/Cool-Retro-Term-1.1.1-x86_64.AppImage -O $(XDG_DATA_HOME)/Cool-Retro-Term-1.1.1-x86_64.AppImage
+	chmod +x $(XDG_DATA_HOME)/Cool-Retro-Term-1.1.1-x86_64.AppImage
+	ln -s $(XDG_DATA_HOME)/Cool-Retro-Term-1.1.1-x86_64.AppImage $(LOCAL_BIN)/cool-retro-term
+
+navi: $(LOCAL_BIN)/navi
+$(LOCAL_BIN)/navi:
+	SOURCE_DIR=$(XDG_DATA_HOME)/navi BIN_DIR=$(LOCAL_BIN) bash <(curl -sL https://raw.githubusercontent.com/denisidoro/navi/master/scripts/install)
+
+slack-term: $(LOCAL_BIN)/slack-term
+$(LOCAL_BIN)/slack-term:
+	cd /tmp; \
+	    wget https://github.com/erroneousboat/slack-term/releases/download/v0.5.0/slack-term-linux-amd64; \
+	    mv slack-term-linux-amd64 $(LOCAL_BIN)/slack-term
+	chmod +x $(LOCAL_BIN)/slack-term
+
+get-poetry.py:
+	wget https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py -O get-poetry.py
+
+poetry: get-poetry.py $(LOCAL_BIN)/poetry
+$(LOCAL_BIN)/poetry:
+	POETRY_HOME=$(XDG_DATA_HOME)/poetry python3 ./get-poetry.py -f
+	ln -s $(XDG_DATA_HOME)/poetry/bin/poetry $(LOCAL_BIN)/poetry
 
 .DEFAULT_GOAL := help
 help:
