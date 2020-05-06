@@ -269,7 +269,7 @@ $(LOCAL_BIN)/slack-term:
 get-poetry.py:
 	wget https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py -O get-poetry.py
 
-poetry: get-poetry.py $(LOCAL_BIN)/poetry
+poetry: get-poetry.py $(LOCAL_BIN)/poetry  ## Install `poetry` via the recommended get-poetry.py script
 $(LOCAL_BIN)/poetry:
 	POETRY_HOME=$(XDG_DATA_HOME)/poetry python3 ./get-poetry.py -f
 	ln -s $(XDG_DATA_HOME)/poetry/bin/poetry $(LOCAL_BIN)/poetry
