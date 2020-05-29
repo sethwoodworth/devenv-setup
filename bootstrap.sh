@@ -7,7 +7,7 @@ sudo apt install \
   git\
 ;
 
-mkdir ~/code;
+mkdir -p ~/code;
 
 git clone https://github.com/sethwoodworth/devenv-setup.git ~/code/devenv-setup;
 
