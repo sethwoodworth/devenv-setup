@@ -25,6 +25,37 @@ TERRAFORM_VERSION = 0.11.14
 NODEJS_VERSION ?= 10.15.3
 CARGO_HOME=$(XDG_DATA_HOME)/cargo
 RUSTUP_HOME=$(XDG_DATA_HOME)/rustup
+DOTFILES=$(XDG_CONFIG_HOME)/dotfiles
+
+DOTFILES_HTTPS_URL=https://github.com/sethwoodworth/dotfiles.git
+
+init: debian-packages $(DOTFILES) ## bootstrap installation of dotfiles
+$(DOTFILES):
+	git init --separate-git-dir=$(DOTFILES) ~/;
+	git --git-dir=$(DOTFILES) remote add origin $(DOTFILES_HTTPS_URL)
+	git --git-dir=$(DOTFILES) fetch origin master
+	git --git-dir=$(DOTFILES) checkout -b $${hostname} origin/master
+
+debian-packages:
+	sudo apt install -y \
+	  build-essential \
+	  curl \
+	  git \
+	  libbz2-dev \
+	  libffi-dev \
+	  liblzma-dev \
+	  libncurses5-dev \
+	  libncursesw5-dev \
+	  libreadline-dev \
+	  libsqlite3-dev \
+	  libssl-dev \
+	  llvm \
+	  make \
+	  python-openssl \
+	  tk-dev \
+	  wget \
+	  xz-utils \
+	  zlib1g-dev
 
 ## Python and python commands
 python: pyenv install-python
