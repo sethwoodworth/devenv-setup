@@ -305,6 +305,18 @@ $(LOCAL_BIN)/poetry:
 	POETRY_HOME=$(XDG_DATA_HOME)/poetry python3 ./get-poetry.py -f
 	ln -s $(XDG_DATA_HOME)/poetry/bin/poetry $(LOCAL_BIN)/poetry
 
+asdf: $(XDG_DATA_HOME)/asdf $(ZSHRCD)/asdf.zsh $(ZSHRCD)/asdf-completion.zsh
+$(XDG_DATA_HOME)/asdf:
+	git clone https://github.com/asdf-vm/asdf.git $(XDG_DATA_HOME)/asdf --branch v0.8.0
+
+$(ZSHRCD)/asdf.zsh:
+	echo 'source "$(XDG_DATA_HOME)/asdf/asdf.sh"' > $(ZSHRCD)/asdf.zsh
+
+$(ZSHRCD)/asdf-completion.zsh:
+	echo 'fpath=("$(XDG_DATA_HOME)/asdf/completions" $$fpath)' > $(ZSHRCD)/asdf-completion.zsh
+
+
+
 .DEFAULT_GOAL := help
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
