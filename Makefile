@@ -20,7 +20,7 @@ PYENV_ROOT=$(XDG_DATA_HOME)/pyenv
 
 CODE_DIR=$(HOME)/code
 
-PYTHON_VERSION ?= 3.8.0
+PYTHON_VERSION ?= 3.8.6
 TERRAFORM_VERSION = 0.11.14
 NODEJS_VERSION ?= 10.15.3
 CARGO_HOME=$(XDG_DATA_HOME)/cargo
@@ -51,7 +51,7 @@ debian-packages:
 	  libssl-dev \
 	  llvm \
 	  make \
-	  python-openssl \
+	  python3-openssl \
 	  tk-dev \
 	  wget \
 	  xz-utils \
@@ -70,7 +70,7 @@ install-python: $(PYENV_ROOT)/versions/$(PYTHON_VERSION) $(ZSHRC)/pip-completion
 $(PYENV_ROOT)/versions/$(PYTHON_VERSION):
 	sudo apt install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
 libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
-xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
+xz-utils tk-dev libffi-dev liblzma-dev python3-openssl git
 	PYENV_ROOT=$(PYENV_ROOT) pyenv install $(PYTHON_VERSION)
 	PYENV_ROOT=$(PYENV_ROOT) pyenv global $(PYTHON_VERSION)
 
@@ -79,7 +79,7 @@ $(ZSHRC)/pip-completion.zsh:
 
 pipx: $(PYENV_ROOT)/versions/$(PYTHON_VERSION) $(LOCAL_BIN)/pipx  ## Install pipx
 $(LOCAL_BIN)/pipx:
-	python3 -m pip --user install pipx
+	python3 -m pip install --user pipx
 
 esptool: $(LOCAL_BIN)/esptool.py
 $(LOCAL_BIN)/esptool.py:
@@ -210,7 +210,8 @@ tldr: $(HOME)/.local/bin/tldr
 $(HOME)/.local/bin/tldr:
 	curl -o ~/.local/bin/tldr https://raw.githubusercontent.com/raylee/tldr/master/tldr
 	chmod +x $(HOME)/.local/bin/tldr
-	echo 'autoload bashcompinit\nbashcompinit\ncomplete -W "$$(tldr 2>/dev/null --list)" tldr' > $(ZSHRCD)/tldr-completion.zsh
+	echo 'autoload bashcompinit bashcompinit ' > $(ZSHRCD)/tldr-completion.zsh
+	echo 'complete -W "$$(tldr 2>/dev/null --list)" tldr' >> $(ZSHRCD)/tldr-completion.zsh
 
 dasht: $(HOME)/.local/share/dasht $(XDG_DATA_HOME)/dasht ## Install dasht cli doc browser
 $(XDG_DATA_HOME)/dasht:
@@ -304,6 +305,12 @@ poetry: get-poetry.py $(LOCAL_BIN)/poetry  ## Install `poetry` via the recommend
 $(LOCAL_BIN)/poetry:
 	POETRY_HOME=$(XDG_DATA_HOME)/poetry python3 ./get-poetry.py -f
 	ln -s $(XDG_DATA_HOME)/poetry/bin/poetry $(LOCAL_BIN)/poetry
+
+snowsql: $(LOCAL_BIN)/snowsql ## Install the snowsql client and symlink it
+$(LOCAL_BIN)/snowsql:
+	wget https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.10-linux_x86_64.bash -O snowsql.bash
+	chmod +x ./snowsql.bash
+	./snowsql.bash
 
 .DEFAULT_GOAL := help
 help:
